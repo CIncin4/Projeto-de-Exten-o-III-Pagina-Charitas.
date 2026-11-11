@@ -1,0 +1,99 @@
+#importa e conectar com os database
+
+import psycopg2
+import os
+import secrets 
+
+from dotenv import load_dotenv
+from datetime import datetime,timedelta 
+
+load_dotenv
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+conexao = psycopg2.connect(DATABASE_URL)
+
+cursor = conexao.cursor()
+
+
+
+def cadastrar_evento(): 
+    titulo = input("Titulo do evento:")
+    descricao = input("Descrição:")
+    data_evento = input ("Data (DD-MM-AAAA):")
+    horario = input ("Horario(HH:MM)")
+    limite_vagas = int(input("Limite de vagas:"))
+
+    token = secrets.token_urlsafe(32)
+
+    checkin_abre = datetime.strptime(
+        data_evento + " 13:00",
+        "%d-%m-%Y %H:%M"
+    )
+    checkin_fecha = checkin_abre + timedelta(hours=5)
+
+
+#Parte do CRUD 
+
+#CREATE
+
+comando = """
+   INSERT INTO evento (
+   titulo,
+   descricao,
+   data_evento,
+   horario,
+   limite_vagas,
+   token_checkin,
+   checkin_abre_em,
+   checkin_fecha_em
+ )
+VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+"""
+valores = (
+ "titulo",
+ "descriçao",
+ "data_evento",
+ "horario",
+ "limite_vagas",
+ "token_checkin"
+ "checkin_abre_em",
+ "checkin_fecha_em"
+)
+cursor.execute(comando,valores)
+conexao.commit()
+
+print ("Evento Cadastrado!")
+
+#READ
+
+def listar_eventos():
+    comando="""
+SELECT id,titulo,descricao,data_evento,horario,limite_vagas,ativo
+
+FROM evento
+WHERE ativo = TRUE
+ORDER BY data_evento
+"""
+
+cursor.execute(comando) 
+eventos = cursor.fetchall()
+
+for evento in eventos:
+    print("ID:",evento[0])
+    print("Título:",evento [1])
+    print("Descrição:",evento[2])
+    print("Data:",evento[3])
+    print("Horário:",evento[4])
+    print("Vagas:",evento[5])
+    print("Ativo:",evento[6])
+
+#parte do update aqui! 
+
+
+#parte do delete aqui!
+
+
+#fecha conexao
+cursor.close()
+conexao.close()
