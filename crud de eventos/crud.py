@@ -7,7 +7,7 @@ import secrets
 from dotenv import load_dotenv
 from datetime import datetime,timedelta 
 
-load_dotenv
+load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
