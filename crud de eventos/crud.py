@@ -88,6 +88,32 @@ for evento in eventos:
     print("Vagas:",evento[5])
     print("Ativo:",evento[6])
 
+
+#menu teste do crud, provalvemente irei deletar depois
+
+while True:
+    print("\n MENU TESTE") 
+    print("1 - Cadastra evento")
+    print("2 - Listar eventos")
+    print("0 - Sair")
+
+    opcao = input("Escolher Opção: ")
+
+    try:
+        if opcao == "1":
+            cadastrar_evento()
+        elif opcao == "2":
+            listar_eventos()
+        elif opcao == "0":
+            print("Encerramento do sistema...")
+            break
+        else:
+            print("Opção inválida")
+
+    except (psycopg2.Error, ValueError) as erro:
+        conexao.rollback()
+        print("Erro:", erro)
+
 #parte do update aqui! 
 
 
