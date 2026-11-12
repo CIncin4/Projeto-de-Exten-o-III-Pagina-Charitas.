@@ -114,7 +114,6 @@ while True:
         conexao.rollback()
         print("Erro:", erro)
 
-<<<<<<< HEAD
 #parte do update aqui!#  
 
 def atualizar_evento():
@@ -197,9 +196,6 @@ def atualizar_evento():
     conexao.commit()
 
     print("\nEvento atualizado com sucesso!")
-=======
-#parte do update aqui! 
->>>>>>> 4d06559629e05fcb2fba5105663bee15eca99e28
 
 
 #parte do delete aqui!
