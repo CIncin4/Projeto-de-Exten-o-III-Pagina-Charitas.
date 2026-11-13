@@ -114,7 +114,88 @@ while True:
         conexao.rollback()
         print("Erro:", erro)
 
-#parte do update aqui! 
+#parte do update aqui!#  
+
+def atualizar_evento():
+    listar_eventos()
+
+    id_evento = int(input("\nDigite o ID do evento que deseja atualizar: "))
+
+    comando = """
+        SELECT id, titulo, descricao, data_evento, horario, limite_vagas
+        FROM evento
+        WHERE id = %s AND ativo = TRUE
+    """
+
+    cursor.execute(comando, (id_evento,))
+    evento = cursor.fetchone()
+
+    if evento is None:
+        print("Evento não encontrado!")
+        return
+
+    print("\n--- DADOS ATUAIS ---")
+    print("Título:", evento[1])
+    print("Descrição:", evento[2])
+    print("Data:", evento[3])
+    print("Horário:", evento[4])
+    print("Limite de vagas:", evento[5])
+
+    print("\n--- NOVOS DADOS ---")
+
+    titulo = input("Novo título: ")
+    descricao = input("Nova descrição: ")
+    data_evento = input("Nova data (DD-MM-AAAA): ")
+    horario = input("Novo horário (HH:MM): ")
+    limite_vagas = int(input("Novo limite de vagas: "))
+
+    # Essa parte e para testar a conversao da data, provavelmente irei deletar depois e mudar
+    data_convertida = datetime.strptime(
+        data_evento, "%d-%m-%Y"
+    ).date()
+
+    datetime.strptime(horario, "%H:%M")
+
+    if limite_vagas <= 0:
+        print("O limite de vagas deve ser maior que zero!")
+        return
+
+    checkin_abre = datetime.strptime(
+        data_evento + " 13:00",
+        "%d-%m-%Y %H:%M"
+    )
+
+    checkin_fecha = checkin_abre + timedelta(hours=5)
+
+    #------------
+    
+    comando = """
+        UPDATE evento
+        SET titulo = %s,
+            descricao = %s,
+            data_evento = %s,
+            horario = %s,
+            limite_vagas = %s,
+            checkin_abre_em = %s,
+            checkin_fecha_em = %s
+        WHERE id = %s AND ativo = TRUE
+    """
+
+    valores = (
+        titulo,
+        descricao,
+        data_convertida,
+        horario,
+        limite_vagas,
+        checkin_abre,
+        checkin_fecha,
+        id_evento
+    )
+
+    cursor.execute(comando, valores)
+    conexao.commit()
+
+    print("\nEvento atualizado com sucesso!")
 
 
 #parte do delete aqui!
