@@ -1,3 +1,13 @@
+"""
+SAP-Charitas | Agendamento com limite de vagas (RF2 e RF7).
+
+Exemplo para psycopg2. Recebe a CONEXAO (nao o cursor) porque a funcao controla a
+transacao: o evento fica travado ate o commit/rollback, e e isso que impede duas
+inscricoes simultaneas de passarem do limite de vagas.
+
+Precisa de uma conexao em modo padrao do psycopg2 (autocommit desligado).
+"""
+
 MAX_NOME, MAX_EMAIL, MAX_TELEFONE = 100, 150, 20
 
 

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}Agendamento confirmado{% endblock %}
+{% block conteudo %}
+<div class="aviso ok" role="status">
+  <h1>Agendamento confirmado!</h1>
+  {% if evento %}
+    <p><strong>{{ evento.titulo }}</strong><br>{{ evento.data_evento|data_br }} · {{ evento.horario|hora_curta }}</p>
+  {% endif %}
+  <p>Sua vaga está reservada. Nos vemos na Casa de Cultura!</p>
+</div>
+<a class="botao" href="{{ url_for('listar') }}">Ver outros eventos</a>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block conteudo %}
+<div class="aviso erro" role="alert">
+  <h1>{{ titulo }}</h1>
+  <p>{{ mensagem }}</p>
+</div>
+<a class="botao" href="{{ url_for('listar') }}">Ver eventos</a>
+{% endblock %}
