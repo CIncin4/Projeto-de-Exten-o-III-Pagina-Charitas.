@@ -111,13 +111,13 @@ def rodar(conectar, limite=5, tentativas=10):
 
         # 3) casos simples
         con = conectar()
-        confere("e-mail com maiusculas e espacos", agendar(con, ev, "Ana", "  MESMA@Exemplo.com ", "1")[0], "JA_INSCRITO")
-        confere("campo vazio", agendar(con, ev, "Ana", "", "1")[0], "DADOS_INVALIDOS")
-        confere("evento que nao existe", agendar(con, -1, "Ana", "a@exemplo.com", "1")[0], "EVENTO_INATIVO")
+        confere("e-mail com maiusculas e espacos", agendar(con, ev, "Ana", "  MESMA@Exemplo.com ", "21900000000")[0], "JA_INSCRITO")
+        confere("campo vazio", agendar(con, ev, "Ana", "", "21900000000")[0], "DADOS_INVALIDOS")
+        confere("evento que nao existe", agendar(con, -1, "Ana", "a@exemplo.com", "21900000000")[0], "EVENTO_INATIVO")
         con.close()
         ev = _criar_evento(conectar, limite, ativo=False); eventos.append(ev)
         con = conectar()
-        confere("evento desativado", agendar(con, ev, "Ana", "a@exemplo.com", "1")[0], "EVENTO_INATIVO")
+        confere("evento desativado", agendar(con, ev, "Ana", "a@exemplo.com", "21900000000")[0], "EVENTO_INATIVO")
         con.close()
     finally:
         if eventos:  # limpa os eventos [TESTE] criados, mesmo se o teste falhar no meio

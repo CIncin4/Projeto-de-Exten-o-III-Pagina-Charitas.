@@ -1,0 +1,45 @@
+{% extends "admin/base.html" %}
+{% block titulo %}Eventos{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <h1>Eventos</h1>
+  <a class="botao" href="{{ url_for('admin.evento_novo') }}">Novo evento</a>
+</div>
+
+{% if eventos %}
+<div class="tabela-rolavel">
+<table class="tabela">
+  <thead><tr><th>Evento</th><th>Data</th><th>Inscritos</th><th>Presentes</th><th>Situação</th><th>Ações</th></tr></thead>
+  <tbody>
+  {% for e in eventos %}
+  <tr class="{{ 'inativo' if not e.ativo }}">
+    <td data-rotulo="Evento">{{ e.titulo }}</td>
+    <td data-rotulo="Data">{{ e.data_evento|data_br }} · {{ e.horario|hora_curta }}</td>
+    <td data-rotulo="Inscritos">{{ e.inscritos }} / {{ e.limite_vagas }}</td>
+    <td data-rotulo="Presentes">{{ e.presentes }}</td>
+    <td data-rotulo="Situação">{{ 'Ativo' if e.ativo else 'Excluído' }}</td>
+    <td data-rotulo="Ações" class="acoes">
+      <a href="{{ url_for('admin.inscritos', evento_id=e.id) }}">Inscritos</a>
+      <a href="{{ url_for('admin.evento_editar', evento_id=e.id) }}">Editar</a>
+      {% if e.ativo %}
+      <form method="post" action="{{ url_for('admin.evento_excluir', evento_id=e.id) }}"
+            onsubmit="return confirm('Excluir este evento da página pública? O histórico de inscrições é mantido.');">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <button class="link-botao perigo" type="submit">Excluir</button>
+      </form>
+      {% else %}
+      <form method="post" action="{{ url_for('admin.evento_reativar', evento_id=e.id) }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <button class="link-botao" type="submit">Reativar</button>
+      </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="vazio">Nenhum evento cadastrado ainda.</p>
+{% endif %}
+{% endblock %}

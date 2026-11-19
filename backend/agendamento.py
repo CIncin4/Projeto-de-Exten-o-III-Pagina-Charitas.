@@ -27,7 +27,10 @@ def agendar(conexao, evento_id, nome, email, telefone):
     email = (email or "").strip().lower()      # sempre em minusculas (ver schema.sql)
     telefone = (telefone or "").strip()
     if (not nome or not email or not telefone
-            or len(nome) > MAX_NOME or len(email) > MAX_EMAIL or len(telefone) > MAX_TELEFONE):
+            or len(nome) > MAX_NOME or len(email) > MAX_EMAIL or len(telefone) > MAX_TELEFONE
+            or "\x00" in nome + email + telefone          # o PostgreSQL nao aceita caractere nulo
+            or "@" not in email or " " in email             # e-mail minimamente plausivel
+            or sum(c.isdigit() for c in telefone) < 8):     # telefone com DDD tem 10 ou 11 digitos
         return "DADOS_INVALIDOS", None
 
     try:

@@ -1,0 +1,32 @@
+{% extends "admin/base.html" %}
+{% block titulo %}{{ 'Editar evento' if evento else 'Novo evento' }}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{{ url_for('admin.eventos') }}">← Eventos</a>
+<h1>{{ 'Editar evento' if evento else 'Novo evento' }}</h1>
+
+{% if erros %}
+<div class="aviso erro" role="alert"><ul>{% for e in erros %}<li>{{ e }}</li>{% endfor %}</ul></div>
+{% endif %}
+
+<form method="post" class="formulario" novalidate>
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+
+  <label for="titulo">Título</label>
+  <input id="titulo" name="titulo" type="text" required maxlength="{{ maximos.MAX_TITULO }}" value="{{ valores.get('titulo', '') }}">
+
+  <label for="descricao">Descrição (opcional)</label>
+  <textarea id="descricao" name="descricao" rows="4" maxlength="{{ maximos.MAX_DESCRICAO }}">{{ valores.get('descricao', '') }}</textarea>
+
+  <label for="data_evento">Data</label>
+  <input id="data_evento" name="data_evento" type="date" required value="{{ valores.get('data_evento', '') }}">
+
+  <label for="horario">Horário</label>
+  <input id="horario" name="horario" type="time" required value="{{ valores.get('horario', '') }}">
+
+  <label for="limite_vagas">Limite de vagas</label>
+  <input id="limite_vagas" name="limite_vagas" type="number" min="1" max="{{ maximos.MAX_VAGAS }}" required value="{{ valores.get('limite_vagas', '') }}">
+
+  <p class="dica">O check-in por QR code abre 30 minutos antes e fecha 2 horas depois do horário do evento (horário de Brasília).</p>
+  <button class="botao grande" type="submit">{{ 'Salvar alterações' if evento else 'Criar evento' }}</button>
+</form>
+{% endblock %}

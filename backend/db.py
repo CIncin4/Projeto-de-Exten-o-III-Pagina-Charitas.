@@ -8,7 +8,7 @@ import os
 
 
 def conectar():
-    """Abre uma conexao nova. Quem chamou e responsavel por fechar (o app.py ja faz isso)."""
+    """Abre uma conexao nova. Quem chamou e responsavel por fechar."""
     import psycopg2
     from dotenv import load_dotenv
 
@@ -19,8 +19,26 @@ def conectar():
     return psycopg2.connect(url, connect_timeout=10)
 
 
+def get_conexao():
+    """Uma conexao por requisicao do Flask, fechada sozinha no fim (veja fechar_conexao)."""
+    from flask import g
+    if "con" not in g:
+        g.con = conectar()
+    return g.con
+
+
+def fechar_conexao(_exc=None):
+    from flask import g
+    con = g.pop("con", None)
+    if con is not None:
+        try:
+            con.close()
+        except Exception:
+            pass
+
+
 def registrar_erro(origem: str, mensagem: str):
-    """Grava em log_erro (tabela do schema). Nunca levanta excecao: log nao pode derrubar a tela."""
+    """Grava em log_erro (RNF4). Nunca levanta excecao: o log nao pode derrubar a tela."""
     try:
         con = conectar()
         try:

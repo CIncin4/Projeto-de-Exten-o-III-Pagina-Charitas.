@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>{% block titulo %}Painel{% endblock %} · Charitas</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topo">
+    <div class="topo-barra">
+      <a class="marca" href="{{ url_for('admin.eventos') }}">
+        <span class="marca-nome">Charitas</span>
+        <span class="marca-sub">Painel da gestão</span>
+      </a>
+      {% if session.get('admin_id') %}
+      <form method="post" action="{{ url_for('admin.logout') }}" class="sair">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <button class="link-botao" type="submit">Sair ({{ session.get('admin_nome') }})</button>
+      </form>
+      {% endif %}
+    </div>
+    {% if session.get('admin_id') %}
+    <nav class="menu">
+      <a href="{{ url_for('admin.eventos') }}">Eventos</a>
+      <a href="{{ url_for('admin.dashboard_pagina') }}">Dashboard</a>
+      <a href="{{ url_for('admin.qr_pagina') }}">QR da entrada</a>
+    </nav>
+    {% endif %}
+  </header>
+  <main class="conteudo largo">
+    {% for m in get_flashed_messages() %}<p class="aviso ok" role="status">{{ m }}</p>{% endfor %}
+    {% block conteudo %}{% endblock %}
+  </main>
+</body>
+</html>

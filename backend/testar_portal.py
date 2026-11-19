@@ -120,7 +120,7 @@ def rodar(conectar):
         confere("campo vazio -> 400", r.status_code == 400, r.status_code)
         confere("  digitado volta no formulario, com HTML escapado", "&lt;b&gt;x&lt;/b&gt;" in corpo and "<b>x</b>" not in corpo)
 
-        r = cliente.post(f"/eventos/{livre}/agendar", data={**form, "email": "robo@exemplo.com", "website": "http://spam"})
+        r = cliente.post(f"/eventos/{livre}/agendar", data={**form, "email": "robo@exemplo.com", "campo_extra": "http://spam"})
         confere("campo-isca preenchido: finge sucesso", r.status_code == 302)
         confere("  mas nao grava nada", _contar(conectar, livre) == 1)
 
