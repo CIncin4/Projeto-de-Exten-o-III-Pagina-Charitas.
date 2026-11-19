@@ -1,0 +1,53 @@
+{% extends "admin/base.html" %}
+{% block titulo %}Dashboard{% endblock %}
+{% block conteudo %}
+<h1>Dashboard de visitas</h1>
+<p class="intro">Dados agregados das presenças registradas (sem nomes nem e-mails). Meses no horário de Brasília.</p>
+
+<div class="indicadores">
+  <div class="indicador"><span class="numero">{{ d.total }}</span><span>visitas no total</span></div>
+  <div class="indicador"><span class="numero">{{ d.mes_atual }}</span><span>visitas neste mês</span></div>
+  <div class="indicador">
+    {% if d.mes_top %}<span class="numero">{{ d.mes_top.rotulo }}</span><span>mês com mais visitas ({{ d.mes_top.visitas }})</span>
+    {% else %}<span class="numero">—</span><span>mês com mais visitas</span>{% endif %}
+  </div>
+</div>
+
+{% macro barras(itens, rotulo) %}
+  {% if itens %}
+  <ul class="barras">
+    {% for i in itens %}
+    <li>
+      <span class="barra-rotulo">{{ i[rotulo] }}{% if i.estado %} / {{ i.estado }}{% endif %}</span>
+      <span class="barra-trilho"><span class="barra" style="width: {{ i.pct }}%"></span></span>
+      <span class="barra-valor">{{ i.visitas }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}<p class="vazio">Ainda não há dados.</p>{% endif %}
+{% endmacro %}
+
+<section class="cartao"><h2>Visitas por mês (últimos 12 meses)</h2>{{ barras(d.por_mes, 'rotulo') }}</section>
+<section class="cartao"><h2>Cidades de origem (10 mais)</h2>{{ barras(d.cidades, 'cidade') }}</section>
+<section class="cartao"><h2>Visitas por evento</h2>{{ barras(d.por_evento, 'origem') }}</section>
+<section class="cartao"><h2>Dia da semana mais movimentado</h2>{{ barras(d.dias, 'dia') }}</section>
+<section class="cartao"><h2>Como a presença foi registrada</h2>{{ barras(d.metodos, 'metodo') }}</section>
+
+<section class="cartao">
+  <h2>Comparecimento dos agendamentos</h2>
+  {% if d.comparecimento %}
+  <div class="tabela-rolavel">
+  <table class="tabela">
+    <thead><tr><th>Evento</th><th>Agendados</th><th>Presentes</th><th>Taxa</th></tr></thead>
+    <tbody>
+    {% for c in d.comparecimento %}
+    <tr><td data-rotulo="Evento">{{ c.titulo }}</td><td data-rotulo="Agendados">{{ c.agendados }}</td>
+        <td data-rotulo="Presentes">{{ c.presentes }}</td>
+        <td data-rotulo="Taxa">{{ (c.taxa ~ '%') if c.taxa is not none else '—' }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}<p class="vazio">Ainda não há eventos.</p>{% endif %}
+</section>
+{% endblock %}

@@ -60,9 +60,48 @@ def renovar_token(cur, evento_id):
     return novo
 
 
+MAX_TOKEN = 64
+UFS = {"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR",
+       "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
+
+
+def _token_bem_formado(token) -> bool:
+    """Token vem da URL (qualquer pessoa pode digitar qualquer coisa): barra o que nem vale consultar."""
+    return isinstance(token, str) and 0 < len(token) <= MAX_TOKEN and "\x00" not in token
+
+
 def _eh_token_geral(token: str) -> bool:
     geral = os.getenv(TOKEN_GERAL_ENV)
-    return bool(geral) and bool(token) and secrets.compare_digest(token, geral)
+    # compara em bytes: compare_digest com texto so aceita ASCII e daria erro 500 com acentos
+    return (bool(geral) and _token_bem_formado(token)
+            and secrets.compare_digest(token.encode("utf-8"), geral.encode("utf-8")))
+
+
+def consultar_qr(cur, token):
+    """
+    Usada ao ABRIR a pagina do formulario: diz de que QR se trata, sem gravar nada.
+    Retorna (codigo, titulo_do_evento):
+      ("OK", None)            QR da entrada do museu (visita geral)
+      ("OK", "<titulo>")      QR de um evento, dentro da janela de check-in
+      ("FORA_DA_JANELA", "<titulo>")
+      ("QR_INVALIDO", None)
+    """
+    if not _token_bem_formado(token):
+        return "QR_INVALIDO", None
+    if _eh_token_geral(token):
+        return "OK", None
+    cur.execute(
+        """
+        SELECT titulo, now() BETWEEN checkin_abre_em AND checkin_fecha_em
+        FROM evento
+        WHERE token_checkin = %s AND ativo = true
+        """,
+        (token,),
+    )
+    evento = cur.fetchone()
+    if evento is None:
+        return "QR_INVALIDO", None
+    return ("OK" if evento[1] else "FORA_DA_JANELA"), evento[0]
 
 
 def registrar_visita(cur, token, nome, cidade, estado=None, email=None) -> str:
@@ -80,9 +119,12 @@ def registrar_visita(cur, token, nome, cidade, estado=None, email=None) -> str:
 
     if (not nome or not cidade
             or len(nome) > MAX_NOME or len(cidade) > MAX_CIDADE
-            or (email and len(email) > MAX_EMAIL)
-            or (estado and len(estado) != 2)):
+            or (email and (len(email) > MAX_EMAIL or "@" not in email))
+            or (estado and estado not in UFS)
+            or any("\x00" in (c or "") for c in (nome, cidade, email))):
         return "DADOS_INVALIDOS"
+    if not _token_bem_formado(token):
+        return "QR_INVALIDO"
 
     # 1) de qual QR veio? Entrada do museu (sem evento) ou QR de um evento
     evento_id = None

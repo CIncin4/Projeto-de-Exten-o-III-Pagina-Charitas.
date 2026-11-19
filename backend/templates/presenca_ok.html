@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block titulo %}Presença registrada{% endblock %}
+{% block conteudo %}
+<div class="aviso ok" role="status">
+  <h1>Presença registrada!</h1>
+  <p>Obrigado pela visita à Casa de Cultura José de Dome.</p>
+</div>
+<a class="botao" href="{{ url_for('listar') }}">Ver os próximos eventos</a>
+{% endblock %}
