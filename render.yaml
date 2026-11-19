@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: sap-charitas
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 1 --threads 4 --timeout 60
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: COOKIE_SECURE
+        value: "1"
+      - key: TRUST_PROXY
+        value: "1"
+      # preencha estes 4 no painel do Render (sync: false = nao vai para o GitHub)
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: TOKEN_PRESENCA_GERAL
+        sync: false
+      - key: APP_BASE_URL
+        sync: false
