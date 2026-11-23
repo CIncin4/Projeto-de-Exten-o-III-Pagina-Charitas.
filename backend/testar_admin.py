@@ -162,7 +162,11 @@ def rodar(conectar):
         auth._falhas.clear()
 
         r = post("/admin/login", {"email": EMAIL.upper(), "senha": SENHA})
-        confere("login correto -> redireciona ao painel", r.status_code == 302 and r.headers["Location"].endswith("/admin/eventos"), r.status_code)
+        confere("login correto -> redireciona a pagina inicial", r.status_code == 302 and r.headers["Location"].endswith("/admin/"), r.status_code)
+        r = cliente.get("/admin/")
+        corpo = html(r)
+        confere("pagina inicial abre com atalhos e numeros", r.status_code == 200 and "O que você quer fazer hoje?" in corpo and "visitas neste mês" in corpo and "Próximos eventos" in corpo, r.status_code)
+        confere("  menu marca a pagina atual", 'aria-current="page"' in corpo)
         r = cliente.get("/admin/eventos")
         confere("painel abre logado", r.status_code == 200 and "Novo evento" in html(r))
         confere("  cabecalhos de seguranca", r.headers.get("X-Frame-Options") == "DENY" and r.headers.get("Cache-Control") == "no-store"

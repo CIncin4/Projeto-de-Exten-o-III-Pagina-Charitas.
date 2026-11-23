@@ -10,6 +10,7 @@ SAP-Charitas | Rotas do painel do administrador (area restrita, prefixo /admin).
 Todas as rotas, menos o login, exigem sessao de administrador; todo POST exige o token CSRF.
 """
 import os
+from datetime import datetime
 
 from flask import (Blueprint, Response, abort, flash, redirect, render_template, request,
                    session, url_for)
@@ -63,7 +64,7 @@ def _login_pagina(erro, email, status=200):
 def login():
     if request.method == "GET":
         if "admin_id" in session:
-            return redirect(url_for("admin.eventos"))
+            return redirect(url_for("admin.inicio"))
         return _login_pagina(None, "")
 
     email = (request.form.get("email") or "").strip().lower()
@@ -80,7 +81,7 @@ def login():
         return _login_pagina("E-mail ou senha incorretos.", email, 401)
     auth.limpar_falhas(chaves)
     auth.entrar(*adm)
-    return redirect(url_for("admin.eventos"))
+    return redirect(url_for("admin.inicio"))
 
 
 @bp.post("/logout")
@@ -91,7 +92,19 @@ def logout():
 
 @bp.get("/")
 def inicio():
-    return redirect(url_for("admin.eventos"))
+    """Pagina inicial: atalhos, numeros do mes e proximos eventos."""
+    con = _con()
+    with con.cursor() as cur:
+        d = dashboard.estatisticas(cur)
+        todos = admin_eventos.listar_todos(cur)
+    hoje = datetime.now(admin_eventos.FUSO).date().isoformat()
+    ativos = [e for e in todos if e["ativo"] and str(e["data_evento"]) >= hoje]   # ISO compara certo como texto
+    proximos = sorted(ativos, key=lambda e: (str(e["data_evento"]), str(e["horario"])))[:5]
+    agendados = sum(c["agendados"] for c in d["comparecimento"])
+    presentes = sum(c["presentes"] for c in d["comparecimento"])
+    taxa = round(100 * presentes / agendados) if agendados else None
+    return render_template("admin/inicio.html", d=d, proximos=proximos, taxa=taxa,
+                           ativos=len(ativos))
 
 
 # ---------- eventos (RF4) ----------

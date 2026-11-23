@@ -1,0 +1,40 @@
+{% extends "admin/base.html" %}
+{% block titulo %}Início{% endblock %}
+{% block conteudo %}
+<h1>O que você quer fazer hoje?</h1>
+<p class="intro">Atalhos para as tarefas mais comuns da Casa de Cultura.</p>
+
+<div class="atalhos">
+  <a class="atalho" href="{{ url_for('admin.evento_novo') }}"><i></i><strong>Criar evento</strong><span>Defina data, horário e número de vagas.</span></a>
+  <a class="atalho" href="{{ url_for('admin.eventos') }}"><i></i><strong>Ver inscritos</strong><span>Escolha um evento, confira quem vem e marque a presença.</span></a>
+  <a class="atalho" href="{{ url_for('admin.qr_pagina') }}"><i></i><strong>Imprimir QR code</strong><span>QR da entrada do museu e de cada evento.</span></a>
+  <a class="atalho" href="{{ url_for('admin.dashboard_pagina') }}"><i></i><strong>Ver números</strong><span>Visitas por mês e cidades de origem.</span></a>
+</div>
+
+<div class="indicadores">
+  <div class="indicador"><span class="numero">{{ d.mes_atual }}</span><span>visitas neste mês</span></div>
+  <div class="indicador"><span class="numero">{{ d.total }}</span><span>visitas no total</span></div>
+  <div class="indicador"><span class="numero">{{ ativos }}</span><span>eventos com data futura</span></div>
+  <div class="indicador"><span class="numero">{{ (taxa ~ '%') if taxa is not none else '—' }}</span><span>dos inscritos compareceram</span></div>
+</div>
+
+<section class="cartao">
+  <h2>Próximos eventos</h2>
+  {% if proximos %}
+    {% for e in proximos %}
+    <div class="evento-linha">
+      <div class="quem"><strong>{{ e.titulo }}</strong><span>{{ e.data_evento|data_br }} · {{ e.horario|hora_curta }}</span></div>
+      <div class="progresso">
+        <span>Inscritos: {{ e.inscritos }} de {{ e.limite_vagas }}</span>
+        <span class="barra-trilho"><span class="barra" style="width: {{ [100, (100 * e.inscritos // e.limite_vagas) if e.limite_vagas else 0]|min }}%"></span></span>
+      </div>
+      {% if e.inscritos >= e.limite_vagas %}<span class="etiqueta cheio">Lotado</span>{% else %}<span class="etiqueta">{{ e.limite_vagas - e.inscritos }} vagas</span>{% endif %}
+      <a href="{{ url_for('admin.inscritos', evento_id=e.id) }}">Inscritos</a>
+    </div>
+    {% endfor %}
+  {% else %}
+    <p class="vazio">Nenhum evento futuro. <a href="{{ url_for('admin.evento_novo') }}">Crie o primeiro.</a></p>
+  {% endif %}
+  <a class="link-ver" href="{{ url_for('admin.eventos') }}">Ver todos os eventos</a>
+</section>
+{% endblock %}

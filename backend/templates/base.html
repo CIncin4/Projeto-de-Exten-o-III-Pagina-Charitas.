@@ -4,13 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titulo %}Eventos{% endblock %} · Charitas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <header class="topo">
     <a class="marca" href="{{ url_for('listar') }}">
-      <span class="marca-nome">Charitas</span>
-      <span class="marca-sub">Casa de Cultura José de Dome · Cabo Frio</span>
+      <span class="marca-textos"><span class="marca-nome">Charitas</span>
+      <span class="marca-sub">Casa de Cultura José de Dome · Cabo Frio</span></span>
     </a>
   </header>
   <main class="conteudo">

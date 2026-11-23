@@ -5,14 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>{% block titulo %}Painel{% endblock %} · Charitas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <header class="topo">
     <div class="topo-barra">
-      <a class="marca" href="{{ url_for('admin.eventos') }}">
-        <span class="marca-nome">Charitas</span>
-        <span class="marca-sub">Painel da gestão</span>
+      <a class="marca" href="{{ url_for('admin.inicio') }}">
+        <span class="marca-textos"><span class="marca-nome">Charitas</span>
+        <span class="marca-sub">Painel da gestão</span></span>
       </a>
       {% if session.get('admin_id') %}
       <form method="post" action="{{ url_for('admin.logout') }}" class="sair">
@@ -22,10 +25,12 @@
       {% endif %}
     </div>
     {% if session.get('admin_id') %}
-    <nav class="menu">
-      <a href="{{ url_for('admin.eventos') }}">Eventos</a>
-      <a href="{{ url_for('admin.dashboard_pagina') }}">Dashboard</a>
-      <a href="{{ url_for('admin.qr_pagina') }}">QR da entrada</a>
+    {% set ep = request.endpoint %}
+    <nav class="menu" aria-label="Menu do painel">
+      <a href="{{ url_for('admin.inicio') }}" {% if ep == 'admin.inicio' %}class="ativo" aria-current="page"{% endif %}>Início</a>
+      <a href="{{ url_for('admin.eventos') }}" {% if ep in ('admin.eventos', 'admin.evento_novo', 'admin.evento_editar', 'admin.inscritos') %}class="ativo" aria-current="page"{% endif %}>Eventos</a>
+      <a href="{{ url_for('admin.dashboard_pagina') }}" {% if ep == 'admin.dashboard_pagina' %}class="ativo" aria-current="page"{% endif %}>Dashboard</a>
+      <a href="{{ url_for('admin.qr_pagina') }}" {% if ep == 'admin.qr_pagina' %}class="ativo" aria-current="page"{% endif %}>QR codes</a>
     </nav>
     {% endif %}
   </header>
