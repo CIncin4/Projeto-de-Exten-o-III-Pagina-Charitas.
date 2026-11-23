@@ -16,6 +16,8 @@
 
 {% if evento.vagas_restantes > 0 %}
 <form method="post" class="formulario" novalidate>
+  <h2>Seus dados</h2>
+  <p class="dica">Usamos só para organizar o evento e avisar se algo mudar.</p>
   <label for="nome">Nome completo</label>
   <input id="nome" name="nome" type="text" required maxlength="{{ limites.MAX_NOME }}"
          autocomplete="name" value="{{ dados.get('nome', '') }}">

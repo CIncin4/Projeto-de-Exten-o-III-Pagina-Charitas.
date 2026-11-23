@@ -45,10 +45,11 @@ h2 { font-size: 1.25rem; margin: 2px 0 6px; font-weight: 800; }
 .botao.grande { width: 100%; margin-top: 8px; }
 .botao.desabilitado { background: var(--borda); color: var(--suave); cursor: not-allowed; }
 .voltar { display: inline-block; margin-bottom: 12px; color: var(--marca); text-decoration: none; }
-.formulario { margin-top: 16px; }
+.formulario { margin-top: 16px; background: var(--papel); border: 1px solid var(--borda); border-radius: 18px; padding: 22px; }
+.formulario h2 { margin: 0 0 2px; }
 .formulario label { display: block; margin: 14px 0 4px; font-weight: 600; font-size: .95rem; }
 .formulario input { width: 100%; padding: 12px; font: inherit; color: var(--texto); background: var(--papel);
-                    border: 1px solid var(--borda); border-radius: 10px; min-height: 44px; }
+                    border: 1px solid var(--borda); border-radius: 12px; min-height: 48px; }
 .formulario input:focus-visible, .botao:focus-visible, a:focus-visible, .link-botao:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: 3px solid var(--marca); outline-offset: 2px; }
 .isca { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
@@ -131,3 +132,11 @@ a { color: var(--marca); }
 .botao, .menu a, .atalho { color: inherit; }
 .botao { color: #fff; }
 .menu a.ativo { color: #fff; }
+
+/* ---------- login (layout C) ---------- */
+.entrada { max-width: 420px; margin: 24px auto 0; }
+.entrada h1 { text-align: center; }
+.entrada .intro { text-align: center; }
+.entrada-icone { width: 56px; height: 56px; border-radius: 50%; background: var(--marca-fundo); color: #fff; font-size: 1.5rem;
+                 font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 8px auto 14px; }
+.formulario .botao.grande { min-height: 50px; font-size: 1.05rem; }
